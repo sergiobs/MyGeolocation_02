@@ -250,7 +250,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnMa
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo(); //las características actuales de la conexión
         if (networkInfo != null && networkInfo.isConnected()) {
-            Depuracion.traza("Hay conexion a internet", textDepurador);
+            Depuracion.traza("Hay conexion a internet ", textDepurador);
         } else {
             Depuracion.traza("ERROR : No hay conexion  a internet", textDepurador);
         }
