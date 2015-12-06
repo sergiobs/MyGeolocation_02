@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MyGeolocation_02</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="fragmentA2">Fragment_A2</string>
+</resources>

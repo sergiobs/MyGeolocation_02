@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_id": "mygeolocation02",
+    "project_number": "234582007254",
+    "name": "MyGeolocation02"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:234582007254:android:ea5825661578ff6c",
+        "client_id": "android:com.android.signin_sbs",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.android.signin_sbs"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 1
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:234582007254:android:59c53f203a5107c9",
+        "client_id": "android:com.example.sergio2.mygeolocation",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.example.sergio2.mygeolocation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "234582007254-3rc5gv7dpn15f70e4vak9c3mga0grf1v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sergio2.mygeolocation",
+            "certificate_hash": "70DD6FDC60859C5376828AD6056744D6CAB66E10"
+          }
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}

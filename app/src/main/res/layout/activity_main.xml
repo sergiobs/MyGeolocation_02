@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity"
+    android:background="#000000"
+
+    android:orientation="vertical"
+
+    >
+
+<!--
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="false"
+        android:visibility="visible"
+        android:id="@+id/LinearPPal">-->
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/layoutTable_label1"
+            android:layout_marginTop="@dimen/activity_vertical_margin_sbs"
+            android:layout_marginRight="@dimen/activity_horizontal_margin_sbs"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin_sbs">
+
+
+
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Latitud:"
+                android:id="@+id/labelLat"
+                android:layout_weight="1"
+                android:textColor="@color/labels_1" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Longitud:"
+                android:id="@+id/labelLong"
+                android:layout_weight="1"
+                android:textColor="@color/labels_1"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Precision: "
+                android:id="@+id/labelPrec"
+                android:layout_weight="1"
+                android:textColor="@color/labels_1"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Vel (mph):"
+                android:id="@+id/labelVel"
+                android:layout_weight="1"
+                android:textColor="@color/labels_1" />
+
+        </LinearLayout>
+        <!-- Table_text1-->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/layoutTable_text1"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin_sbs"
+            android:layout_marginRight="@dimen/activity_horizontal_margin_sbs">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text=""
+                android:id="@+id/textLat"
+                android:layout_weight="1"
+                android:textColor="@color/labels_2" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text=""
+                android:id="@+id/textLong"
+                android:layout_weight="1"
+                android:textColor="@color/labels_2" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text=""
+                android:id="@+id/textPrecision"
+                android:layout_weight="1"
+                android:textColor="@color/labels_2" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text=""
+                android:id="@+id/textSpeed"
+                android:layout_weight="1"
+                android:textColor="@color/labels_2" />
+        </LinearLayout>
+
+        <!-- layoutTable_label2-->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:id="@+id/layoutTable_label2"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin_sbs"
+            android:layout_marginRight="@dimen/activity_horizontal_margin_sbs">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="T.Min (s):"
+                android:id="@+id/labelTminimo"
+                android:layout_weight="1"
+                android:textColor="@color/labels_1"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="D.Min. (m):"
+                android:id="@+id/labelDistMinima"
+                android:layout_weight="1"
+                android:textColor="@color/labels_1"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/textView"
+                android:layout_weight="1"
+                android:textColor="@color/labels_1" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/textView2"
+                android:layout_weight="1"
+                android:textColor="@color/labels_1" />
+
+        </LinearLayout>
+
+        <!-- layoutTable_text2-->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/layoutTable_text2"
+            android:layout_marginRight="@dimen/activity_horizontal_margin_sbs"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin_sbs">
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textColor="@color/labels_2"
+                android:ems="10"
+                android:id="@+id/editText_T_min"
+                android:layout_weight="1" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textColor="@color/labels_2"
+                android:ems="10"
+                android:id="@+id/editText_Dist_min"
+                android:layout_weight="1" />
+
+
+            <!--
+                        <EditText
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:textColor="@color/labels_2"
+                            android:ems="10"
+                            android:id="@+id/editText"
+                            android:layout_weight="1" />
+                            -->
+                        <!--
+                        <EditText
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:textColor="@color/labels_2"
+                            android:ems="10"
+                            android:id="@+id/editText2"
+                            android:layout_weight="1" />-->
+            <!-- sign-in button -->
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/sign_in_button"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+            <!-- sign-out button -->
+            <Button
+                android:id="@+id/sign_out_button"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Sign Out"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+        <!-- layoutTable_labels   -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/layoutTable_labels">
+
+            <!--Cabeceras de tabla    -->
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/image_avail_gps"
+                android:layout_weight="1"
+                android:src="@drawable/gps_24_grey" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/image_avail_network"
+                android:layout_weight="1"
+                android:src="@drawable/wifi_24_grey" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/image_avail_passive"
+                android:layout_weight="1"
+                android:src="@drawable/radio_24_grey"
+                android:adjustViewBounds="false" />
+
+        </LinearLayout>
+        <!-- layoutTable_Aval   -->
+
+
+        <!-- Linea Tabla USO   -->
+        <!--
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="6dp"
+            android:id="@+id/layoutTable_use">
+
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Use:"
+                android:id="@+id/ID_TABLE_USE"
+                android:background="#88888888"
+                android:layout_weight="1.2"
+                android:textSize="15dp"
+                android:layout_row="2"
+                android:layout_column="0"
+                android:layout_height="30dp"
+                android:gravity="center_vertical|right"
+                android:layout_columnWeight=".3"
+                android:layout_rowWeight="1"
+                android:layout_width="match_parent"
+                android:textColor="@color/labels_1" />
+
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/text_onLine_GPS"
+                android:background="#88888888"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="15dp"
+                android:layout_row="2"
+                android:layout_column="1"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                android:text=" "
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/text_onLine_Network"
+                android:background="#88888888"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="15dp"
+                android:layout_row="2"
+                android:layout_column="2"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                android:text=" "
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/text_onLine_Passive"
+                android:background="#88888888"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="15dp"
+                android:layout_row="2"
+                android:layout_column="3"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                android:text=" "
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+        -->
+
+        <!-- Botones Tab   -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/layoutTable_Buttons"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin_sbs"
+            android:layout_marginRight="@dimen/activity_horizontal_margin_sbs">
+
+            <ToggleButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="New ToggleButton"
+                android:id="@+id/toggleActivar_loc"
+                android:layout_weight="1"
+                android:textOff="OFF"
+                android:textOn="ON"
+                android:textColor="@color/labels_1" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=" Dep "
+                android:textColor="@color/labels_1"
+                android:id="@+id/buttonDep"
+                android:layout_weight="1" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Table"
+                android:textColor="@color/labels_1"
+                android:id="@+id/buttonGPS"
+                android:layout_weight="1" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Map"
+                android:textColor="@color/labels_1"
+                android:id="@+id/buttonFrame"
+                android:layout_weight="1" />
+
+
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Aux"
+                android:textColor="@color/labels_1"
+                android:id="@+id/buttonAux"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+
+        <!-- Relative que contiene los layouts de los tabs   -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayoutStatus"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin_sbs"
+        android:layout_marginRight="@dimen/activity_horizontal_margin_sbs" >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="user"
+            android:id="@+id/textUser"
+            android:textColor="@color/labels_2"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- Tab Tabla   -->
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical"
+                android:layout_below="@+id/summaryTableLayout"
+                android:minHeight="200dip"
+                android:id="@+id/layoutTabla">
+                <ScrollView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="vertical">
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TableLayout
+                            android:id="@+id/frozenTable"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:layout_marginTop="2dip"
+                            android:layout_marginLeft="1dip"
+                            android:stretchColumns="1"
+                            android:showDividers="beginning|middle|end">
+
+                        </TableLayout>
+
+                        <HorizontalScrollView
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/frozenTable"
+                            android:layout_marginTop="2dip"
+                            android:layout_marginLeft="4dip"
+                            android:layout_marginRight="1dip">
+
+                            <TableLayout
+                                android:id="@+id/contentTable"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:stretchColumns="1"/>
+                        </HorizontalScrollView>
+                    </LinearLayout>
+                </ScrollView>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3.4"
+                    android:id="@+id/layoutMap_dep">
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:scrollbars="vertical"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:id="@+id/textDepuradorMap"
+                        android:background="#000000"
+                        android:textColor="#ffea00"
+                        android:gravity="bottom"
+                        android:scrollIndicators="right"
+                        android:visibility="visible" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Tab Depurador   -->
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/layoutDepurador">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="vertical"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/textDepurador"
+                    android:background="#000000"
+                    android:textColor="#ffea00"
+                    android:gravity="bottom"
+                    android:scrollIndicators="right"
+                    android:visibility="visible" />
+            </LinearLayout>
+
+            <!-- Tab Mapa   -->
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/layoutMap">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                        xmlns:map="http://schemas.android.com/apk/res-auto"
+                        android:name="com.google.android.gms.maps.MapFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/map"
+
+                        map:uiZoomControls="true"
+                        map:uiTiltGestures="true"
+                        map:uiCompass="true"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="6"
+                    android:id="@+id/layoutMap_button"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin_sbs"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin_sbs">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Clear"
+                        android:id="@+id/buttonClrMarker"
+                        android:textColor="@color/labels_1" />
+
+                    <ToggleButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Position"
+                        android:id="@+id/togglePosition"
+                        android:textOff="Pos"
+                        android:textOn="Pos"
+                        android:textColor="@color/labels_1" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </RelativeLayout>
+
+
+ <!--   </LinearLayout>-->
+
+
+
+</LinearLayout>
