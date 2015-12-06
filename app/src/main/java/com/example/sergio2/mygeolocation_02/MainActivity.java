@@ -256,6 +256,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnMa
         }
 
         String urlFusionT = "https://www.googleapis.com/fusiontables/v2/";
+        String urlFusionT_v1 = "https://www.googleapis.com/fusiontables/v1/";
         String key ="AIzaSyB-C74mt75P7YcE9_RxXyDCNekBAQ-tGMk";
         String tableId="1CBP-Ht9blF_PuPXNWjAajjRfEZUbNeCxuQ5WvMbJ";
         String resourceID = "tables";
