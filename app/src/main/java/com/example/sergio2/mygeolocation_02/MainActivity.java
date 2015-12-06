@@ -252,7 +252,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnMa
         if (networkInfo != null && networkInfo.isConnected()) {
             Depuracion.traza("Hay conexion a internet", textDepurador);
         } else {
-            Depuracion.traza("ERROR: No hay conexion  a internet", textDepurador);
+            Depuracion.traza("ERROR : No hay conexion  a internet", textDepurador);
         }
 
         String urlFusionT = "https://www.googleapis.com/fusiontables/v2/";
