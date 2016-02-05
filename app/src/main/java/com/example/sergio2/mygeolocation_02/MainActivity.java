@@ -9,6 +9,9 @@ package com.example.sergio2.mygeolocation_02;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.location.GpsSatellite;
@@ -65,6 +68,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -126,6 +130,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     boolean tabFrame = false;
     boolean GpsStatusListener_Enabled = false;
     boolean status_Activado = false;
+
 
     LatLng CasaNueva;
     float zoomActual = ZOOM_INICIAL;
@@ -226,7 +231,29 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 //.addScope()
                 .build();
 
+
         iniciaGUI();
+
+        // Obtiene la version
+        PackageInfo pInfo = null;
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            String version = pInfo.versionName;
+            String packageName = pInfo.packageName;
+            String lastUpdateTime = new SimpleDateFormat("yyyy/MM/dd HH:mm").format(new Date(pInfo.lastUpdateTime));
+            String firstInstallTime = new SimpleDateFormat("yyyy/MM/dd HH:mm").format(new Date(pInfo.firstInstallTime));
+
+            Depuracion.traza("****************" , textDepurador);
+            Depuracion.traza("Version: " + version, textDepurador);
+            Depuracion.traza("packageName: " + packageName, textDepurador);
+            Depuracion.traza("lastUpdateTime: " + lastUpdateTime, textDepurador);
+            Depuracion.traza("firstInstallTime: " + firstInstallTime, textDepurador);
+            Depuracion.traza("****************" , textDepurador);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
 
         // Conexion a internet, fusiontable
         // --------------------------------------------------------
@@ -271,7 +298,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         } finally {
         }
 
+
         // --------------------------------------------------------
+
+
+
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
@@ -280,7 +311,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         ArrayList<String[]> content = new ArrayList<String[]>();
         gpsStatusListener = new myGpsStatusListener(textDepurador, content, this);
-
         String[] cabecera = {" PRN ", " InFix ", " SNR ", "  Azim  ", "  Elev  "};
 
         TableRow rowCabecera = new TableRow(this);
@@ -647,7 +677,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         //ArrayList<String[]> respuestaListener = new ArrayList<String[]>();
         public myGpsStatusListener(TextView tv, ArrayList respuesta, Context contexto) {
-            textDepurador.setText("dentro del constructor del myGpsStatusListener");
+            Depuracion.traza("Constructor del myGpsStatusListener", textDepurador);
             String[] _fila1 = { "xB1", "xB2", "xB3", "xB4", "xB5"  };
             contexto_dentro = contexto;
             respuesta.add(_fila1);
@@ -777,6 +807,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         display_res_Ancho = display.getWidth();
         display_res_Alto  = display.getHeight();
         display_densidad  = getResources().getDisplayMetrics().densityDpi;
+
+
 
         Depuracion.traza("Screen Width " + Integer.toString(display_res_Ancho), textDepurador);
         Depuracion.traza("Screen High: " + Integer.toString(display_res_Alto), textDepurador);
