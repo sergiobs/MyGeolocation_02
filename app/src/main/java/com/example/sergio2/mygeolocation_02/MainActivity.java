@@ -9,7 +9,6 @@ package com.example.sergio2.mygeolocation_02;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -46,7 +45,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
@@ -85,7 +83,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     // pongo esto de SignInActivity.java
     int RC_SIGN_IN = 9001;
     private static final String TAG = "SignInActivity";
-
 
     // Display
     int display_res_Ancho = 0;
@@ -152,6 +149,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     String idToken;
 
     PowerManager.WakeLock wl;
+    PowerManager pm;
 
     @Override
     protected void onStart() {
@@ -212,6 +210,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
 
         Depuracion.traza("server_client_id " + getString(R.string.server_client_id));
 
@@ -304,8 +305,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
 
 
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+
 
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
