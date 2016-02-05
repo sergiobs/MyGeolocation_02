@@ -1021,7 +1021,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 //
         if (!avaliableProviderGPS) {
             image_status_gps.setImageResource(R.drawable.gps_24_grey_crossed);
-            image_status_gps.setImageResource(R.drawable.gps_24_grey_);
         } else if ( (avaliableProviderGPS)&&(!status_Activado) ||
                     (avaliableProviderGPS)&&(status_Activado)&&(!enabledProviderGPS)
                 ) {
