@@ -8,20 +8,18 @@ import java.util.Date;
  * Created by sergio2 on 12/11/2015.
  */
 public class Depuracion {
+    static  String idDep = "DEBUG_SBS: ";
     public static void traza(String mensaje, TextView tv) {
         String hora = DateFormat.getTimeInstance().format(new Date())+": ";
-        String idDep = "DEBUG_SBS: ";
         System.out.println(hora + " " + idDep + mensaje);
         tv.append("\n" + hora+mensaje);
     }
     public static void traza(String mensaje) {
         String hora = DateFormat.getTimeInstance().format(new Date())+": ";
-        String idDep = "DEBUG_SBS: ";
         System.out.println(hora + " " + idDep + mensaje);
     }
     public static void traza(String mensaje, TextView tv, TextView tv2) {
         String hora = DateFormat.getTimeInstance().format(new Date())+": ";
-        String idDep = "DEBUG_SBS: ";
         System.out.println(hora + " " + idDep + mensaje);
         tv.append("\n" + hora + mensaje);
         tv2.append("\n" + hora + mensaje);

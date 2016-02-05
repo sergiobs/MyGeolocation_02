@@ -15,8 +15,10 @@ public class statusCodeTools {
             "201", "201 Created. The request has been fulfilled and resulted in a new resource being created.",
             "400", "400 Client Error. Bad Request.",
             "401", "401 Client Error. Unauthorized",
+            "403", "403 Client Error. Forbidden",
             "404", "404 Client Error. Not found.",
             "405", "405 Client Error. Method not allowed.",
+            "406", "406 Client Error. Not acceptable.",
             "501", "501 Server Error. Not implemented. The server does not support the functionality required to fulfill the request.",
             "503", "503 Server Error. Service Unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
             "504", "504 Server Error. Gateway TimeOut."

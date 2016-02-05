@@ -75,6 +75,46 @@
           "status": 1
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:234582007254:android:f73254ba9e474218",
+        "client_id": "android:com.example.sergio2.mygeolocation_02",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.example.sergio2.mygeolocation_02"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "234582007254-34317vg7el97ret9e4qdms2lehrnhjup.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sergio2.mygeolocation_02",
+            "certificate_hash": "70DD6FDC60859C5376828AD6056744D6CAB66E10"
+          }
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
     }
   ],
   "client_info": [],

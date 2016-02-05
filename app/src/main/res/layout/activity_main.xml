@@ -197,7 +197,7 @@
                 android:layout_weight="1" />
 
 
-            <!--
+
                         <EditText
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
@@ -206,7 +206,7 @@
                             android:ems="10"
                             android:id="@+id/editText"
                             android:layout_weight="1" />
-                            -->
+
                         <!--
                         <EditText
                             android:layout_width="fill_parent"
@@ -216,20 +216,30 @@
                             android:ems="10"
                             android:id="@+id/editText2"
                             android:layout_weight="1" />-->
-            <!-- sign-in button -->
-            <com.google.android.gms.common.SignInButton
-                android:id="@+id/sign_in_button"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
-            <!-- sign-out button -->
-            <Button
-                android:id="@+id/sign_out_button"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Sign Out"
-                android:layout_weight="1"/>
 
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/layoutTable_signinout"
+
+                android:layout_weight="1">
+                <!-- sign-in button -->
+                <com.google.android.gms.common.SignInButton
+                    android:id="@+id/sign_in_button"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+                <!-- sign-out button -->
+                <Button
+                    android:id="@+id/sign_out_button"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:visibility="gone"
+                    android:background="#ffffff" />
+            </LinearLayout>
         </LinearLayout>
 
         <!-- layoutTable_labels   -->
@@ -244,21 +254,21 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/image_avail_gps"
+                android:id="@+id/image_status_gps"
                 android:layout_weight="1"
                 android:src="@drawable/gps_24_grey" />
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/image_avail_network"
+                android:id="@+id/image_status_network"
                 android:layout_weight="1"
                 android:src="@drawable/wifi_24_grey" />
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/image_avail_passive"
+                android:id="@+id/image_status_passive"
                 android:layout_weight="1"
                 android:src="@drawable/radio_24_grey"
                 android:adjustViewBounds="false" />
@@ -369,7 +379,7 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Table"
+                android:text="GPS"
                 android:textColor="@color/labels_1"
                 android:id="@+id/buttonGPS"
                 android:layout_weight="1" />
@@ -422,7 +432,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:orientation="vertical"
-                android:layout_below="@+id/summaryTableLayout"
+
                 android:minHeight="200dip"
                 android:id="@+id/layoutTabla">
                 <ScrollView

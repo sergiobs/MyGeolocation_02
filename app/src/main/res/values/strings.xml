@@ -2,4 +2,7 @@
     <string name="app_name">MyGeolocation_02</string>
     <string name="title_activity_maps">Map</string>
     <string name="fragmentA2">Fragment_A2</string>
+
+    <string name="server_client_id">234582007254-j6pri48a3v1qh47n10o24lo8uqfqv0lm.apps.googleusercontent.com</string>
+    <string name="server_client_id3">22s</string>
 </resources>
