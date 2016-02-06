@@ -18,6 +18,7 @@ import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -115,12 +116,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     MapFragment mapFragment;
 
     //VARIALBLES
-    boolean enabledProviderGPS = false;
-    boolean enabledProviderNetwork = false;
-    boolean enabledProviderPassive = false;
-    boolean avaliableProviderGPS = false;
-    boolean avaliableProviderNetwork = false;
-    boolean avaliableProviderPassive = false;
+    boolean ProviderGPS_enabled = false;
+    boolean ProviderGPS_available = false;
+    boolean ProviderGPS_status = false;
+    boolean ProviderNetwork_enabled = false;
+    boolean ProviderNetwork_available = false;
+    boolean ProviderPassive_enabled = false;
+    boolean ProviderPassive_available = false;
     boolean tabDep = true;
     boolean tabGPS = false;
     boolean tabAux = false;
@@ -181,6 +183,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     protected void onDestroy() {
+        Depuracion.traza("onDestroy()", textDepurador);
         super.onDestroy();
         if (GpsStatusListener_Enabled) {
             lm.removeGpsStatusListener(gpsStatusListener);
@@ -303,38 +306,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         // --------------------------------------------------------
 
 
-
-
-
-
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         ArrayList<String[]> content = new ArrayList<String[]>();
         gpsStatusListener = new myGpsStatusListener(textDepurador, content, this);
-        String[] cabecera = {" PRN ", " InFix ", " SNR ", "  Azim  ", "  Elev  "};
 
-        TableRow rowCabecera = new TableRow(this);
-        //for (int j = 0; j < content.get(0).length; j++) {
-        for (int j = 0; j < cabecera.length; j++) {
-            TextView rowCell = new TextView(this);
-            rowCell.setText(cabecera[j]);
-            rowCell.setTextColor(Color.parseColor("#CCCCCC"));
-            rowCabecera.addView(rowCell);
-        }
-        contentTable.addView(rowCabecera);
 
-        for (int i = 0; i < content.size(); i++) {
-            TableRow row = new TableRow(this);
-
-            for (int j = 0; j < content.get(0).length; j++) {
-                TextView rowCell = new TextView(this);
-                rowCell.setText(content.get(i)[j]);
-                rowCell.setTextColor(Color.parseColor("#999999"));
-                row.addView(rowCell);
-                //Depuracion.traza(rowCell.getText()+"");
-            }
-            contentTable.addView(row);
-        }
 
         locationListenerGPS = new mylocationlistener();
         locationListenerNetwork = new mylocationlistener();
@@ -342,7 +319,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         ProvidersToolsSBS.printInfoProviders2(lm, textDepurador);
         checkInitialAvailableProvider();
-        checkEnabledProvider();
+        checkInitialEnabledProvider();
         actualizaGUI_Providers();
         actualizaGUI();
     }
@@ -365,21 +342,21 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         Depuracion.traza("Casca el gpsStatusListener", textDepurador);
                     }
 
-                    if (avaliableProviderPassive) {
+                    if (ProviderPassive_available) {
                         try {
                             lm.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, t_min, dist_min, locationListenerPassive);     //nos subscribimos al proveedor para que nos de información
                         } catch (SecurityException e) {
                             Depuracion.traza("Security Excepcion en provider PASSIVE_PROVIDER al hacer requestLocationUpdates: " + e);
                         }
                     }
-                    if (avaliableProviderGPS) {
+                    if (ProviderGPS_available) {
                         try {
                             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, t_min, dist_min, locationListenerGPS);     //nos subscribimos al proveedor para que nos de información
                         } catch (SecurityException e) {
                             Depuracion.traza("Security Excepcion en provider GPS_PROVIDER al hacer requestLocationUpdates: " + e);
                         }
                     }
-                    if (avaliableProviderNetwork) {
+                    if (ProviderNetwork_available) {
                         try {
                             lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, t_min, dist_min, locationListenerNetwork);     //nos subscribimos al proveedor para que nos de información
                         } catch (SecurityException e) {
@@ -394,21 +371,23 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         Depuracion.traza("GpsStatus_listener eliminado", textDepurador);
                     }
 
-                    if (avaliableProviderPassive) {
+                    if (ProviderPassive_available) {
                         try {
                             lm.removeUpdates(locationListenerPassive);
                         } catch (SecurityException e) {
                             Depuracion.traza("Security Excepcion en provider PASSIVE_PROVIDER al hacer removeUpdates: " + e);
                         }
                     }
-                    if (avaliableProviderGPS) {
+                    if (ProviderGPS_available) {
+                        ProviderGPS_status = false;   //para que no salga icono en verde nada mas activar el ON si previamente ya habia alcanzado valor true
+
                         try {
                             lm.removeUpdates(locationListenerGPS);
                         } catch (SecurityException e) {
                             Depuracion.traza("Security Excepcion en provider GPS_PROVIDER al hacer removeUpdates: " + e);
                         }
                     }
-                    if (avaliableProviderNetwork) {
+                    if (ProviderNetwork_available) {
                         try {
                             lm.removeUpdates(locationListenerNetwork);
                         } catch (SecurityException e) {
@@ -416,7 +395,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         }
                     }
                 }
-                checkEnabledProvider();
+                checkInitialEnabledProvider();
                 actualizaGUI_Providers();
                 break;
 
@@ -688,6 +667,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             gpsStatus = lm.getGpsStatus(gpsStatus);
             satellites = gpsStatus.getSatellites();
 
+
             sat = satellites.iterator();
             contentTable.removeAllViews();
 
@@ -912,6 +892,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             btnClearMarker.setTextSize(GUI_TEXTO_BOT_PEQ);
             Depuracion.traza("Resolucion W < 800: " + pixels, textDepurador);
         }
+        creaTablaGPS();
     }
 
     class mylocationlistener implements LocationListener {
@@ -933,16 +914,20 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 String sPrec = df_vel.format(pPrec);
                 String sSpeed = df_vel.format(pSpeed * 2.2369f);   // en mph
 
-                String sProvider = pProvider.substring(0,1);
+                String sProvider = pProvider.substring(0,1); //gps, passive, network --> g, p, n
 
+
+                //Depuracion.traza("onLocationChanged_1 (Avail/Enab/Status): " + ProviderGPS_available+"/"+ProviderGPS_enabled+"/"+ProviderGPS_status, textDepurador);
                 switch(pProvider) {
                     case "gps":
+                        ProviderGPS_status = true;   //para forzar icono VERDE si llega posicion GPS antes de el mensaje de estado = 2
+                        actualizaGUI_Providers();
                         markerText = DateFormat.getTimeInstance().format(new Date())+": "+ sPrec+ "v: "+sSpeed+" "+sProvider;
-                        labelColor = "GREEN";
+                        labelColor = "YELLOW";
                         break;
                     case "network":
                         markerText = DateFormat.getTimeInstance().format(new Date())+": "+ sPrec+ "v: "+sSpeed+" "+sProvider;
-                        labelColor = "YELLOW";;
+                        labelColor = "CYAN";;
                         sSpeed="-1.0";
                         break;
                     case "passive":
@@ -951,7 +936,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         sSpeed="-1.0";
                         break;
                 }
-
+                //Depuracion.traza("onLocationChanged_2 (Avail/Enab/Status): " + ProviderGPS_available+"/"+ProviderGPS_enabled+"/"+ProviderGPS_status, textDepurador);
                 textLat.setText(sLong);
                 textLong.setText(sLat);
                 textPrec.setText(sPrec);
@@ -962,7 +947,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 textPrec.setTextColor(Color.parseColor(labelColor));
                 textSpeed.setTextColor(Color.parseColor(labelColor));
 
-                Depuracion.traza("onLocationChanged: " + sLong + "," + sLat + ", " + sPrec + ", " +sSpeed +", " + sProvider, textDepurador);
+                Depuracion.traza("onLocationChanged: ("+sProvider+"): " + sLong + "," + sLat + ", " + sPrec + ", " +sSpeed, textDepurador);
 
                 if (mapaSBS!=null) {
                     LatLng Actual = new LatLng(pLat, pLong);
@@ -976,11 +961,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     switch(pProvider) {
                         case "gps":
                             mapaSBS.addMarker(new MarkerOptions().position(Actual).title(markerText)
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
                             break;
                         case "network":
                             mapaSBS.addMarker(new MarkerOptions().position(Actual).title(markerText)
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
                             break;
                         case "passive":
                             mapaSBS.addMarker(new MarkerOptions().position(Actual).title(markerText)
@@ -996,18 +981,40 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            Depuracion.traza("onStatusChanged: provider=" + provider + ", status=" + status, textDepurador);
+
+            Depuracion.traza("onStatusChanged: provider: " + provider + ", status: " + status + ", extras: "+ extras, textDepurador);
+            if (provider.equals("gps")){
+                if (status == LocationProvider.OUT_OF_SERVICE){
+                    ProviderGPS_enabled = false;
+                    ProviderGPS_available = false;
+                    ProviderGPS_status = false;
+                    Depuracion.traza("OUT_OF_SERVICE", textDepurador);
+                }
+                if (status == LocationProvider.TEMPORARILY_UNAVAILABLE){
+                    ProviderGPS_enabled = true;
+                    ProviderGPS_available = true;
+                    ProviderGPS_status = false;
+
+                }
+                if (status == LocationProvider.AVAILABLE){
+                    ProviderGPS_enabled = true;
+                    ProviderGPS_available = true;
+                    ProviderGPS_status = true;
+
+                }
+            }
             actualizaGUI_Providers();
         }
 
         @Override
         public void onProviderEnabled(String provider) {
             if (provider.equals("gps")) {
-                enabledProviderGPS = true;
+                ProviderGPS_enabled = true;
+
             } else if (provider.equals("network")) {
-                enabledProviderNetwork = true;
+                ProviderNetwork_enabled = true;
             } else if (provider.equals("passive")){
-                enabledProviderPassive = true;
+                ProviderPassive_enabled = true;
             }
             Depuracion.traza("onProviderEnabled() "+ provider, textDepurador);
             actualizaGUI_Providers();
@@ -1016,71 +1023,74 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         @Override
         public void onProviderDisabled(String provider) {
             if (provider.equals("gps")) {
-                enabledProviderGPS = false;
+                ProviderGPS_enabled = false;
+                ProviderGPS_status = false;
             } else if (provider.equals("network")) {
-                enabledProviderNetwork = false;
+                ProviderNetwork_enabled = false;
             } else if (provider.equals("passive")) {
-                enabledProviderPassive = false;
+                ProviderPassive_enabled = false;
             }
             Depuracion.traza("onProviderDisabled() "+ provider, textDepurador);
             actualizaGUI_Providers();
         }
     }
 
-    public void checkEnabledProvider() {
-        //sólo se chequea en el inicio ya que luego se actualizan los estasdos de los boolean
+    public void checkInitialEnabledProvider() {
+        //sólo se chequea en el inicio ya que luego se actualizan los estados de los boolean
         //con onProviderEnabled y onProviderDisabled
-        if (avaliableProviderGPS)
-            enabledProviderGPS = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if (avaliableProviderNetwork)
-            enabledProviderNetwork = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        if (avaliableProviderPassive)
-            enabledProviderPassive = lm.isProviderEnabled(LocationManager.PASSIVE_PROVIDER);
+        if (ProviderGPS_available)
+            ProviderGPS_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if (ProviderNetwork_available)
+            ProviderNetwork_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        if (ProviderPassive_available)
+            ProviderPassive_enabled = lm.isProviderEnabled(LocationManager.PASSIVE_PROVIDER);
     }
 
     public void checkInitialAvailableProvider() {
         // para saber si existe el HW de cada uno de los tres posibles provider
         listProviders = lm.getAllProviders();
-        avaliableProviderGPS = listProviders.contains("gps");
-        avaliableProviderNetwork = listProviders.contains("network");
-        avaliableProviderPassive = listProviders.contains("passive");
-        //Depuracion.traza("xxx: " + avaliableProviderGPS + " " + avaliableProviderNetwork + " " + avaliableProviderPassive);
+        ProviderGPS_available = listProviders.contains("gps");
+        ProviderNetwork_available = listProviders.contains("network");
+        ProviderPassive_available = listProviders.contains("passive");
+        //Depuracion.traza("xxx: " + ProviderGPS_available + " " + ProviderNetwork_available + " " + ProviderPassive_available);
     }
 
 
 
     public void actualizaGUI_Providers() {
-        if (!avaliableProviderGPS) {
+        if (!ProviderGPS_available) {
             image_status_gps.setImageResource(R.drawable.gps_24_grey_crossed);
-        } else if ( (avaliableProviderGPS)&&(!status_Activado) ||
-                    (avaliableProviderGPS)&&(status_Activado)&&(!enabledProviderGPS)
+        } else if ((!status_Activado) ||
+                    (status_Activado)&&(!ProviderGPS_enabled)
                 ) {
             image_status_gps.setImageResource(R.drawable.gps_24_grey);
-        } else if ((avaliableProviderGPS)&&(status_Activado)&&(enabledProviderGPS)) {
-            image_status_gps.setImageResource(R.drawable.gps_24_green);
+        } else if ((status_Activado)&&(ProviderGPS_enabled)&&(ProviderGPS_status)) {
+            {image_status_gps.setImageResource(R.drawable.gps_24_green);Depuracion.traza("VERDE", textDepurador);}
+        } else if ((status_Activado)&&(ProviderGPS_enabled)&&(!ProviderGPS_status)) {
+            {image_status_gps.setImageResource(R.drawable.gps_24_yellow);Depuracion.traza("AMARILLO", textDepurador );}
         } else {
             image_status_gps.setImageResource(R.drawable.icon_dot_red_small);
         }
 
-        if (!avaliableProviderPassive) {
+        if (!ProviderPassive_available) {
             image_status_passive.setImageResource(R.drawable.radio_24_grey_crossed);
-        } else if ( (avaliableProviderPassive)&&(!status_Activado) ||
-                    (avaliableProviderPassive)&&(status_Activado)&&(!enabledProviderPassive)
+        } else if ((!status_Activado) ||
+                    (status_Activado)&&(!ProviderPassive_enabled)
                 ) {
             image_status_passive.setImageResource(R.drawable.radio_24_grey);
-        } else if ((avaliableProviderPassive)&&(status_Activado)&&(enabledProviderPassive)) {
+        } else if ((status_Activado)&&(ProviderPassive_enabled)) {
             image_status_passive.setImageResource(R.drawable.radio_24_green);
         } else {
             image_status_passive.setImageResource(R.drawable.icon_dot_red_small);
         }
 
-        if (!avaliableProviderNetwork) {
+        if (!ProviderNetwork_available) {
             image_status_network.setImageResource(R.drawable.wifi_24_grey_crossed);
-        } else if ( (avaliableProviderNetwork)&&(!status_Activado) ||
-                    (avaliableProviderNetwork)&&(status_Activado)&&(!enabledProviderNetwork)
+        } else if ((!status_Activado) ||
+                    (status_Activado)&&(!ProviderNetwork_enabled)
                 ) {
             image_status_network.setImageResource(R.drawable.wifi_24_grey);
-        } else if ((avaliableProviderNetwork)&&(status_Activado)&&(enabledProviderNetwork)) {
+        } else if ((status_Activado)&&(ProviderNetwork_enabled)) {
             image_status_network.setImageResource(R.drawable.wifi_24_green);
         } else {
             image_status_network.setImageResource(R.drawable.icon_dot_red_small);
@@ -1138,5 +1148,18 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
+    public void creaTablaGPS() {
+        String[] cabecera = {" PRN ", " InFix ", " SNR ", "  Azim  ", "  Elev  "};
+
+        TableRow rowCabecera = new TableRow(this);
+        //for (int j = 0; j < content.get(0).length; j++) {
+        for (int j = 0; j < cabecera.length; j++) {
+            TextView rowCell = new TextView(this);
+            rowCell.setText(cabecera[j]);
+            rowCell.setTextColor(Color.parseColor("#CCCCCC"));
+            rowCabecera.addView(rowCell);
+        }
+        contentTable.addView(rowCabecera);
+    }
 
 }
