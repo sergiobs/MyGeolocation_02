@@ -40,7 +40,7 @@
 
 
             <TextView
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Latitud:"
@@ -49,7 +49,7 @@
                 android:textColor="@color/labels_1" />
 
             <TextView
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Longitud:"
@@ -58,21 +58,30 @@
                 android:textColor="@color/labels_1"/>
 
             <TextView
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Precision: "
                 android:id="@+id/labelPrec"
-                android:layout_weight="1"
+                android:layout_weight=".7"
                 android:textColor="@color/labels_1"/>
 
             <TextView
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Vel (mph):"
+                android:text="mph:"
                 android:id="@+id/labelVel"
-                android:layout_weight="1"
+                android:layout_weight=".7"
+                android:textColor="@color/labels_1" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="nSat"
+                android:id="@+id/label_nSat"
+                android:layout_weight=".5"
                 android:textColor="@color/labels_1" />
 
         </LinearLayout>
@@ -86,7 +95,7 @@
             android:layout_marginRight="@dimen/activity_horizontal_margin_sbs">
 
             <TextView
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text=""
@@ -95,7 +104,7 @@
                 android:textColor="@color/labels_2" />
 
             <TextView
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text=""
@@ -104,21 +113,30 @@
                 android:textColor="@color/labels_2" />
 
             <TextView
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text=""
                 android:id="@+id/textPrecision"
-                android:layout_weight="1"
+                android:layout_weight=".7"
                 android:textColor="@color/labels_2" />
 
             <TextView
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text=""
                 android:id="@+id/textSpeed"
-                android:layout_weight="1"
+                android:layout_weight=".7"
+                android:textColor="@color/labels_2" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text=""
+                android:id="@+id/text_nSat"
+                android:layout_weight=".5"
                 android:textColor="@color/labels_2" />
         </LinearLayout>
 
@@ -134,25 +152,25 @@
             android:layout_marginRight="@dimen/activity_horizontal_margin_sbs">
 
             <TextView
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="T.Min (s):"
+                android:text="tMin (s):"
                 android:id="@+id/labelTminimo"
-                android:layout_weight="1"
+                android:layout_weight=".6"
                 android:textColor="@color/labels_1"/>
 
             <TextView
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="D.Min. (m):"
+                android:text="dMin (m):"
                 android:id="@+id/labelDistMinima"
-                android:layout_weight="1"
+                android:layout_weight=".6"
                 android:textColor="@color/labels_1"/>
 
             <TextView
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:id="@+id/textView"
@@ -160,11 +178,11 @@
                 android:textColor="@color/labels_1" />
 
             <TextView
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:id="@+id/textView2"
-                android:layout_weight="1"
+                android:layout_weight="1.1"
                 android:textColor="@color/labels_1" />
 
         </LinearLayout>
@@ -179,35 +197,62 @@
             android:layout_marginLeft="@dimen/activity_horizontal_margin_sbs">
 
             <EditText
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:textColor="@color/labels_2"
                 android:ems="10"
                 android:id="@+id/editText_T_min"
-                android:layout_weight="1" />
+                android:layout_weight=".6" />
 
             <EditText
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:textColor="@color/labels_2"
                 android:ems="10"
                 android:id="@+id/editText_Dist_min"
-                android:layout_weight="1" />
+                android:layout_weight=".6" />
 
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/layoutTable_labels"
+                android:layout_marginLeft="5px"
+                android:layout_marginRight="5px">
 
-                        <EditText
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="number"
-                            android:textColor="@color/labels_2"
-                            android:ems="10"
-                            android:id="@+id/editText"
-                            android:layout_weight="1" />
+                <!--Cabeceras de tabla    -->
 
-                        <!--
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/image_status_gps"
+                    android:src="@drawable/gps_24_grey"
+                    android:layout_marginLeft="3px"
+                    android:layout_marginRight="3px" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/image_status_network"
+                    android:src="@drawable/wifi_24_grey"
+                    android:layout_marginLeft="3px"
+                    android:layout_marginRight="3px" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/image_status_passive"
+                    android:src="@drawable/radio_24_grey"
+                    android:adjustViewBounds="false"
+                    android:layout_marginLeft="3px"
+                    android:layout_marginRight="3px" />
+
+            </LinearLayout>
+
+            <!--
                         <EditText
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
@@ -220,11 +265,11 @@
 
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/layoutTable_signinout"
 
-                android:layout_weight="1">
+                android:layout_weight="1.1">
                 <!-- sign-in button -->
                 <com.google.android.gms.common.SignInButton
                     android:id="@+id/sign_in_button"
@@ -243,38 +288,7 @@
         </LinearLayout>
 
         <!-- layoutTable_labels   -->
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/layoutTable_labels">
-
-            <!--Cabeceras de tabla    -->
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/image_status_gps"
-                android:layout_weight="1"
-                android:src="@drawable/gps_24_grey" />
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/image_status_network"
-                android:layout_weight="1"
-                android:src="@drawable/wifi_24_grey" />
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/image_status_passive"
-                android:layout_weight="1"
-                android:src="@drawable/radio_24_grey"
-                android:adjustViewBounds="false" />
-
-        </LinearLayout>
-        <!-- layoutTable_Aval   -->
+    <!-- layoutTable_Aval   -->
 
 
         <!-- Linea Tabla USO   -->
@@ -547,6 +561,24 @@
                     android:id="@+id/layoutMap_button"
                     android:layout_marginRight="@dimen/activity_horizontal_margin_sbs"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin_sbs">
+
+                    <ToggleButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="GPS track"
+                        android:id="@+id/observador_track_button"
+                        android:textOff="Me Track"
+                        android:textOn="Me Track"
+                        android:textColor="@color/labels_1" />
+
+                    <ToggleButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="GPS track"
+                        android:id="@+id/GPS_track_button"
+                        android:textOff="GPS Track"
+                        android:textOn="GPS Track"
+                        android:textColor="@color/labels_1" />
 
                     <Button
                         android:layout_width="wrap_content"

@@ -74,6 +74,8 @@ public class PostCommentTask extends AsyncTask<String, Void, List<String>> {
         }
 
 
+
+
         byte[] postData       = urlParameters.getBytes();
 
         try {
