@@ -374,7 +374,7 @@
 
             <ToggleButton
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:text="New ToggleButton"
                 android:id="@+id/toggleActivar_loc"
                 android:layout_weight="1"
@@ -384,7 +384,7 @@
 
             <Button
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:text=" Dep "
                 android:textColor="@color/labels_1"
                 android:id="@+id/buttonDep"
@@ -392,7 +392,7 @@
 
             <Button
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:text="GPS"
                 android:textColor="@color/labels_1"
                 android:id="@+id/buttonGPS"
@@ -400,17 +400,17 @@
 
             <Button
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:text="Map"
                 android:textColor="@color/labels_1"
-                android:id="@+id/buttonFrame"
+                android:id="@+id/buttonMap"
                 android:layout_weight="1" />
 
 
 
             <Button
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:text="Aux"
                 android:textColor="@color/labels_1"
                 android:id="@+id/buttonAux"

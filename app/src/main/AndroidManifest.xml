@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.sergio2.mygeolocation_02"
     android:versionCode ="1"
-    android:versionName ="1.1.0">
+    android:versionName ="1.1.1">
 
     <permission
         android:name="org.example.ejemplogooglemaps.permission.MAPS_RECEIVE"
@@ -35,14 +35,14 @@
         android:theme="@style/AppTheme" >
 
         <!--  API KEY SOLO DEBUG-->
-            <meta-data android:name="com.google.android.maps.v2.API_KEY"
-                 android:value="AIzaSyDXgqOwipSCHNlCMevBwVnlRgXkhV0a1DY"/>
+        <!--    <meta-data android:name="com.google.android.maps.v2.API_KEY"
+                 android:value="AIzaSyDXgqOwipSCHNlCMevBwVnlRgXkhV0a1DY"/> -->
 
 
 
         <!--  API KEY SOLO RELEASE-->
-        <!--      <meta-data android:name="com.google.android.maps.v2.API_KEY"
-                 android:value="AIzaSyA4s027KNXRNhff5YAzVWleLNb1GpmEtug"/>-->
+              <meta-data android:name="com.google.android.maps.v2.API_KEY"
+                 android:value="AIzaSyA4s027KNXRNhff5YAzVWleLNb1GpmEtug"/>
 
           <!--   <meta-data
                  android:name="com.google.android.geo.API_KEY"

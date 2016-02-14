@@ -87,7 +87,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     float ZOOM_GPS_TRACK = 1;
     float zoomActual = ZOOM_GPS_TRACK;
 
-    int contador_refresco = 0;
+    int TABLE_TEXT_SIZE = 18;
+
 
     long RADIUS_ELEVATION_0 = 8468000; // km
     long RADIUS_ELEVATION_5 = 7918000; // km
@@ -105,6 +106,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     long RADIUS_ELEVATION_80 = 847000; // km
     long RADIUS_ELEVATION_85 = 423000; // km
     boolean CIRCLE_PAINTED = false;
+
+
     // pongo esto de SignInActivity.java
     int RC_SIGN_IN = 9001;
     private static final String TAG = "SignInActivity";
@@ -123,7 +126,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     TextView textDepurador, textDepuradorMap;
 
     ToggleButton btnActivar_loc;
-    Button btnTab_Dep, btnTab_GPS, btnTab_Aux, btnTab_Frame;
+    Button btnTab_Dep, btnTab_GPS, btnTab_Aux, btnTab_Map;
     Button btnClearMarker;
 
     SignInButton signInButton;
@@ -156,15 +159,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     boolean GpsStatusListener_Enabled = false;
     boolean status_Activado = false;
     boolean GPS_track_active = false;
-    boolean obs_track_active = false;
+    boolean obs_track_active = true;
 
-    boolean primerPRN = false;
+    boolean primerPOS = false;
 
-    LatLng CasaNueva;
+
     LatLng Pos_ObservadorGPS = null;
     LatLng Pos_ObservadorNetwork = null;
     LatLng Pos_ObservadorPassive = null;
-
+    LatLng Pos_Camara = null;
 
 
     GoogleMap mapaSBS;
@@ -369,12 +372,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         checkInitialEnabledProvider();
         actualizaGUI_Providers();
         actualizaGUI();
-
-        LatLng Obs_prueba1 = new LatLng(40, 60);
-        float elevation1 = 90;
-        float azimut1 = 0;
-
-        SatPos.calc_LatS(Obs_prueba1, elevation1,azimut1 ) ;
+//
+//        LatLng Obs_prueba1 = new LatLng(40, 60);
+//        float elevation1 = 90;
+//        float azimut1 = 0;
+//
+//        SatPos.calc_LatS(Obs_prueba1, elevation1,azimut1 ) ;
 
     }
 
@@ -491,7 +494,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
 
                 break;
-            case R.id.buttonFrame:
+            case R.id.buttonMap:
                 if (!tabFrame) {
                     tabDep = false;
                     tabGPS = false;
@@ -527,6 +530,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     if (btnGPS_track.isChecked()) {
                         GPS_track_active = true;
                         zoomActual = ZOOM_GPS_TRACK;
+                        CameraPosition camPos_actual = new CameraPosition.Builder()
+                                .target(Pos_Camara)
+                                .zoom(zoomActual)
+                                .bearing(0).tilt(0).build();
+                        CameraUpdate camUpd32 = CameraUpdateFactory.newCameraPosition(camPos_actual);
+                        mapaSBS.animateCamera(camUpd32);
+
                     }else {
                         GPS_track_active = false;
                     }
@@ -540,6 +550,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     if (btnObs_track.isChecked()) {
                         obs_track_active = true;
                         zoomActual = ZOOM_OBSERVADOR;
+                        CameraPosition camPos_actual = new CameraPosition.Builder()
+                                .target(Pos_Camara)
+                                .zoom(zoomActual)
+                                .bearing(0).tilt(0).build();
+                        CameraUpdate camUpd32 = CameraUpdateFactory.newCameraPosition(camPos_actual);
+                        mapaSBS.animateCamera(camUpd32);
                     }else {
                         obs_track_active = false;
                     }
@@ -676,18 +692,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         mapaSBS = googleMap;
         mapaSBS.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        CasaNueva = new LatLng(40.382137, -80.053961);
-//        Bombardier = new LatLng(40.347280, -79.957230);
-//
-//        mapaSBS.addMarker(new MarkerOptions().position(Bombardier).title("Example Marker in Bombardier")
-//                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-//        mapaSBS.addMarker(new MarkerOptions().position(CasaNueva).title("Example Marker in CasaNueva")
-//                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-        CameraUpdate camUpd1 = CameraUpdateFactory.newLatLng(CasaNueva);
+        LatLng  CoordInicial = new LatLng(40.41, -3.7036);
+        Pos_Camara = CoordInicial;
+
+        CameraUpdate camUpd1 = CameraUpdateFactory.newLatLng(Pos_Camara);
         mapaSBS.moveCamera(camUpd1);
 
         CameraPosition camPos1 = new CameraPosition.Builder()
-                .target(CasaNueva)
+                .target(Pos_Camara)
                 .zoom(zoomActual)
                 .bearing(0)
                 .tilt(0)
@@ -738,11 +750,19 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     class myGpsStatusListener implements GpsStatus.Listener {
-        TextView tv_Fuera;
+        int contador_refresco = 0;
+        int CONTADOR_REFERSCO_MAX = 10;
+
+        DecimalFormat format_coord = new DecimalFormat("000.0");
+        DecimalFormat format_PRN = new DecimalFormat("00");
+        DecimalFormat format_SNR = new DecimalFormat("00.0");
+        DecimalFormat format_Azi = new DecimalFormat("000.0");
+        DecimalFormat format_Ele = new DecimalFormat("00.0");
+
         ArrayList<String[]> respuestaListener = null;
         Context contexto_dentro;
         String[] sEvent = { "GPS_EVENT_STARTED", "GPS_EVENT_STOPPED", "GPS_EVENT_FIRST_FIX", "GPS_EVENT_SATELLITE_STATUS" };
-        int TABLE_TEXT_SIZE = 18;
+
         int MAX_SAT = 120;
         int nSat_old = 0;
 
@@ -769,13 +789,16 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             gpsStatus = lm.getGpsStatus(gpsStatus);
             satellites = gpsStatus.getSatellites();
             sat = satellites.iterator();
-            contentTable.removeAllViews();
             LatLng Sat2 = new LatLng(0,0);
             LatLng pos_observador = new LatLng(pLat, pLong);  //OJO!!! deberia cogerse lat long del GPS, no en general
 
 
-            Depuracion.traza("Circles, Markes, MarkersMovidos: "
-                    +numeroCircles +", " +numeroMarkers+ ", " +numeroMarkersMovidos, textDepurador);
+            contentTable.removeAllViews();
+            creaTablaGPS();
+
+
+//            Depuracion.traza("Circles, Markes, MarkersMovidos: "
+//                    +numeroCircles +", " +numeroMarkers+ ", " +numeroMarkersMovidos, textDepurador);
             int i=0;
             while (sat.hasNext()) {
                 GpsSatellite satellite = sat.next();
@@ -854,7 +877,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 TextView rowCell6 = new TextView(contexto_dentro);
                 TextView rowCell7 = new TextView(contexto_dentro);
 
-                rowCell1.setText(satellite.getPrn() + "   ");
+                rowCell1.setText(format_PRN.format(satellite.getPrn()) + "   ");
                 rowCell1.setTextColor(Color.parseColor("#CCCCCC"));
                 rowCell1.setTextSize(TABLE_TEXT_SIZE);
                 row.addView(rowCell1);
@@ -862,24 +885,26 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 rowCell2.setTextColor(Color.parseColor("#CCCCCC"));
                 rowCell2.setTextSize(TABLE_TEXT_SIZE);
                 row.addView(rowCell2);
-                rowCell3.setText(satellite.getSnr() + "   (");
+                rowCell3.setText(format_SNR.format(satellite.getSnr()) + "   (");
                 rowCell3.setTextColor(Color.parseColor("#CCCCCC"));
                 rowCell3.setTextSize(TABLE_TEXT_SIZE);
                 row.addView(rowCell3);
-                rowCell4.setText(satellite.getAzimuth() + ", ");
+
+                rowCell4.setText(format_Azi.format(satellite.getAzimuth()) + ", ");
                 rowCell4.setTextColor(Color.parseColor("#CCCCCC"));
                 rowCell4.setTextSize(TABLE_TEXT_SIZE);
                 row.addView(rowCell4);
-                rowCell5.setText(satellite.getElevation() + ")");
+                rowCell5.setText(format_Ele.format(satellite.getElevation()) + ")");
                 rowCell5.setTextColor(Color.parseColor("#CCCCCC"));
                 rowCell5.setTextSize(TABLE_TEXT_SIZE);
                 row.addView(rowCell5);
 
-                rowCell6.setText("  -- " + Sat2.latitude + ", ");
+
+                rowCell6.setText("  -- " + format_coord.format(Sat2.latitude) + ", ");
                 rowCell6.setTextColor(Color.parseColor("#CCCCCC"));
                 rowCell6.setTextSize(TABLE_TEXT_SIZE);
                 row.addView(rowCell6);
-                rowCell7.setText(""+Sat2.longitude);
+                rowCell7.setText(""+format_coord.format(Sat2.longitude));
                 rowCell7.setTextColor(Color.parseColor("#CCCCCC"));
                 rowCell7.setTextSize(TABLE_TEXT_SIZE);
                 row.addView(rowCell7);
@@ -889,7 +914,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
             TableRow row_aux = new TableRow(contexto_dentro);
             TextView titulo = new TextView(contexto_dentro);
-            titulo.setText("Array de SatelliteGPS_Position para depuracion");
+            titulo.setText("---");
             row_aux.addView(titulo);
             contentTable.addView(row_aux);
 
@@ -920,12 +945,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     rowCell4.setTextColor(Color.parseColor("#FFFFFF"));
                     rowCell4.setTextSize(TABLE_TEXT_SIZE);
                     row.addView(rowCell4);
-                    rowCell5.setText("  -- " + array_SateliteGPS_Position[aa].getLatitude() + ", ");
+                    rowCell5.setText("  -- " +
+                            format_coord.format(array_SateliteGPS_Position[aa].getLatitude()) + ", ");
                     rowCell5.setTextColor(Color.parseColor("#FFFFFF"));
                     rowCell5.setTextSize(TABLE_TEXT_SIZE);
                     row.addView(rowCell5);
 
-                    rowCell6.setText("  -- " + array_SateliteGPS_Position[aa].getLongitude() + ", ");
+                    rowCell6.setText("  -- " +
+                            format_coord.format(array_SateliteGPS_Position[aa].getLongitude()) + ", ");
                     rowCell6.setTextColor(Color.parseColor("#FFFFFF"));
                     rowCell6.setTextSize(TABLE_TEXT_SIZE);
                     row.addView(rowCell6);
@@ -945,11 +972,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 text_nSat.setTextColor(Color.parseColor("YELLOW"));
 
             contador_refresco ++;
-            //if (contador_refresco == 10) contador_refresco = 0;
-            contador_refresco = 0;
+            if (contador_refresco == CONTADOR_REFERSCO_MAX) contador_refresco = 0;
 
-            text_nSat.setText(i + " / " + nSat_old);
 
+            //text_nSat.setText(i + " / " + nSat_old);
+            text_nSat.setText(i + "");
 
             switch (event) {
                 case 1: //GPS_EVENT_STARTED
@@ -996,11 +1023,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         btnTab_Dep = (Button) findViewById(R.id.buttonDep);
         btnTab_GPS = (Button) findViewById(R.id.buttonGPS);
         btnTab_Aux = (Button) findViewById(R.id.buttonAux);
-        btnTab_Frame = (Button) findViewById(R.id.buttonFrame);
+        btnTab_Map = (Button) findViewById(R.id.buttonMap);
         btnClearMarker = (Button) findViewById(R.id.buttonClrMarker);
         btnPosition = (ToggleButton) findViewById(R.id.togglePosition);
         btnGPS_track = (ToggleButton) findViewById(R.id.GPS_track_button);
         btnObs_track = (ToggleButton) findViewById(R.id.observador_track_button);
+        btnObs_track.setChecked(true);
 
         signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signOutButton = (Button) findViewById(R.id.sign_out_button);
@@ -1014,7 +1042,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         btnTab_Dep.setOnClickListener(this);
         btnTab_GPS.setOnClickListener(this);
         btnTab_Aux.setOnClickListener(this);
-        btnTab_Frame.setOnClickListener(this);
+        btnTab_Map.setOnClickListener(this);
         btnActivar_loc.setOnClickListener(this);
         btnClearMarker.setOnClickListener(this);
         btnPosition.setOnClickListener(this);
@@ -1092,16 +1120,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         float GUI_TEXTO_VISOR_GRANDE = 25f;
         float GUI_TEXTO_DEP_GRANDE = 15f;
         float GUI_TEXTO_BOT_GRANDE = 20f;
-        //float GUI_TEXTO_LABEL_L3_GRANDE = 18f;
+        int GUI_ALTO_BOT_TAB_GRANDE = 60;
 
         float GUI_TEXTO_VISOR_PEQ = 15f;
         float GUI_TEXTO_DEP_PEQ = 11f;
         float GUI_TEXTO_BOT_PEQ = 15f;
-        //float GUI_TEXTO_LABEL_L3_PEQ = 11f;
-
 
 
         if (display_res_Ancho>=800) {
+            TABLE_TEXT_SIZE = 18;
             editText_T_Min.setTextSize(GUI_TEXTO_VISOR_GRANDE);
             editText_Dist_Min.setTextSize(GUI_TEXTO_VISOR_GRANDE);
             textLat.setTextSize(GUI_TEXTO_VISOR_GRANDE);
@@ -1115,17 +1142,29 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
             btnActivar_loc.setTextSize(GUI_TEXTO_BOT_GRANDE);
             btnTab_Aux.setTextSize(GUI_TEXTO_BOT_GRANDE);
-            btnTab_Frame.setTextSize(GUI_TEXTO_BOT_GRANDE);
+            btnTab_Map.setTextSize(GUI_TEXTO_BOT_GRANDE);
             btnTab_Dep.setTextSize(GUI_TEXTO_BOT_GRANDE);
             btnTab_GPS.setTextSize(GUI_TEXTO_BOT_GRANDE);
             btnPosition.setTextSize(GUI_TEXTO_BOT_GRANDE);
             btnGPS_track.setTextSize(GUI_TEXTO_BOT_GRANDE);
+            btnObs_track.setTextSize(GUI_TEXTO_BOT_GRANDE);
             btnClearMarker.setTextSize(GUI_TEXTO_BOT_GRANDE);
 
-            Depuracion.traza("Resolucion W >= 800: " + pixels, textDepurador);
+            btnTab_Aux.setLayoutParams(
+                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, GUI_ALTO_BOT_TAB_GRANDE, 1));
+            btnTab_Map.setLayoutParams(
+                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, GUI_ALTO_BOT_TAB_GRANDE, 1));
+            btnTab_Dep.setLayoutParams(
+                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, GUI_ALTO_BOT_TAB_GRANDE, 1));
+            btnTab_GPS.setLayoutParams(
+                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, GUI_ALTO_BOT_TAB_GRANDE, 1));
+            btnActivar_loc.setLayoutParams(
+                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, GUI_ALTO_BOT_TAB_GRANDE, 1));
+
         }
 
         else if (display_res_Ancho<800) {
+            TABLE_TEXT_SIZE = 11;
             editText_T_Min.setTextSize(GUI_TEXTO_VISOR_PEQ);
             editText_Dist_Min.setTextSize(GUI_TEXTO_VISOR_PEQ);
             textLat.setTextSize(GUI_TEXTO_VISOR_PEQ);
@@ -1139,15 +1178,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
             btnActivar_loc.setTextSize(GUI_TEXTO_BOT_PEQ);
             btnTab_Aux.setTextSize(GUI_TEXTO_BOT_PEQ);
-            btnTab_Frame.setTextSize(GUI_TEXTO_BOT_PEQ);
+            btnTab_Map.setTextSize(GUI_TEXTO_BOT_PEQ);
             btnTab_Dep.setTextSize(GUI_TEXTO_BOT_PEQ);
             btnTab_GPS.setTextSize(GUI_TEXTO_BOT_PEQ);
             btnPosition.setTextSize(GUI_TEXTO_BOT_PEQ);
             btnGPS_track.setTextSize(GUI_TEXTO_BOT_PEQ);
+            btnObs_track.setTextSize(GUI_TEXTO_BOT_PEQ);
             btnClearMarker.setTextSize(GUI_TEXTO_BOT_PEQ);
-            Depuracion.traza("Resolucion W < 800: " + pixels, textDepurador);
         }
-        creaTablaGPS();
+
     }
 
     class mylocationlistener implements LocationListener {
@@ -1158,6 +1197,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 DecimalFormat df_latlong = new DecimalFormat("##.#####");
                 String markerText="";
                 String labelColor="WHITE";
+
+                if (!primerPOS) {
+                    primerPOS = true;
+                    zoomActual = ZOOM_OBSERVADOR;
+                }
 
                  pLat = location.getLatitude();
                 pLong = location.getLongitude();
@@ -1212,27 +1256,25 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
                 if (mapaSBS!=null&&obs_track_active) {
 
-                    LatLng Actual = new LatLng(pLat, pLong);
-
-                    CameraPosition camPos_actual = new CameraPosition.Builder().target(Actual)
+                    Pos_Camara = new LatLng(pLat, pLong);
+                    CameraPosition camPos_actual = new CameraPosition.Builder().target(Pos_Camara)
                             .zoom(zoomActual)
                             .bearing(0).tilt(0).build();
-
 
                     CameraUpdate camUpd32 = CameraUpdateFactory.newCameraPosition(camPos_actual);
                     mapaSBS.moveCamera(camUpd32);
 
                     switch(pProvider) {
                         case "gps":
-                            mapaSBS.addMarker(new MarkerOptions().position(Actual).title(markerText)
+                            mapaSBS.addMarker(new MarkerOptions().position(Pos_Camara).title(markerText)
                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
                             break;
                         case "network":
-                            mapaSBS.addMarker(new MarkerOptions().position(Actual).title(markerText)
+                            mapaSBS.addMarker(new MarkerOptions().position(Pos_Camara).title(markerText)
                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
                             break;
                         case "passive":
-                            mapaSBS.addMarker(new MarkerOptions().position(Actual).title(markerText)
+                            mapaSBS.addMarker(new MarkerOptions().position(Pos_Camara).title(markerText)
                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
                             break;
                     }
@@ -1453,11 +1495,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             btnTab_Aux.setBackgroundColor(Color.parseColor("#000066"));
         }
         if (tabFrame) {
-            btnTab_Frame.setBackgroundColor(Color.parseColor("#0000FF"));
+            btnTab_Map.setBackgroundColor(Color.parseColor("#0000FF"));
             layoutMap.setVisibility(View.VISIBLE);
 
         }else {
-            btnTab_Frame.setBackgroundColor(Color.parseColor("#000066"));
+            btnTab_Map.setBackgroundColor(Color.parseColor("#000066"));
             layoutMap.setVisibility(View.INVISIBLE);
         }
 
@@ -1477,14 +1519,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     public void creaTablaGPS() {
-        //String[] cabecera = {" PRN ", " InFix ", " SNR ", "  Azim  ", "  Elev  "};
         String[] cabecera = {" PRN ", " InFix ", " SNR ", "  Azim  ", "  Elev  ", "  LatS  ", "  LonS  "};
         TableRow rowCabecera = new TableRow(this);
         //for (int j = 0; j < content.get(0).length; j++) {
         for (int j = 0; j < cabecera.length; j++) {
             TextView rowCell = new TextView(this);
             rowCell.setText(cabecera[j]);
-            rowCell.setTextColor(Color.parseColor("#CCCCCC"));
+            rowCell.setTextColor(Color.parseColor("#FFFF00"));
             rowCabecera.addView(rowCell);
         }
         contentTable.addView(rowCabecera);
