@@ -1,9 +1,18 @@
 package com.sergio2.auxiliares;
 
+import java.text.DecimalFormat;
+
 /**
  * Created by sergio2 on 13/02/2016.
  */
 public class SatelliteGPS_Position {
+    public static DecimalFormat format_coord = new DecimalFormat("000.0");
+    public static DecimalFormat format_PRN = new DecimalFormat("00");
+    public static DecimalFormat format_SNR = new DecimalFormat("00.0");
+    public static DecimalFormat format_Azi = new DecimalFormat("000.0");
+    public static DecimalFormat format_Ele = new DecimalFormat("00.0");
+
+
     public double getLatitude() {
         return latitude;
     }
@@ -59,8 +68,7 @@ public class SatelliteGPS_Position {
     }
 
     public void setElevation(float elevation) {
-
-        this.elevation = elevation;
+                this.elevation = elevation;
     }
 
     public float getAzimut() {

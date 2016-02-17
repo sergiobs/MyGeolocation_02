@@ -64,8 +64,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.sergio2.auxiliares.Depuracion;
+import com.sergio2.auxiliares.FileRegister;
 import com.sergio2.auxiliares.SatPos;
 import com.sergio2.auxiliares.SatelliteGPS_Position;
+import com.sergio2.auxiliares.UtilMap;
 
 import java.io.IOException;
 import java.net.URL;
@@ -78,7 +80,7 @@ import java.util.Iterator;
 import java.util.List;
 
 //public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback {
-public class MainActivity extends FragmentActivity implements View.OnClickListener, OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends FragmentActivity implements View.OnClickListener, View.OnLongClickListener, OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
     //public class MainActivity extends FragmentActivity implements View.OnClickListener  {
     // CONSTANTES
     int T_MIN_INICIAL = 2;
@@ -86,27 +88,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     float ZOOM_OBSERVADOR = 17;
     float ZOOM_GPS_TRACK = 1;
     float zoomActual = ZOOM_GPS_TRACK;
-
     int TABLE_TEXT_SIZE = 18;
-
-
-    long RADIUS_ELEVATION_0 = 8468000; // km
-    long RADIUS_ELEVATION_5 = 7918000; // km
-    long RADIUS_ELEVATION_10 = 7383000; // km
-    long RADIUS_ELEVATION_20 = 6341000; // km
-    long RADIUS_ELEVATION_30 = 5343000; // km
-    long RADIUS_ELEVATION_40 = 4386000; // km
-    long RADIUS_ELEVATION_45 = 3921000; // km
-    long RADIUS_ELEVATION_50 = 3464000; // km
-    long RADIUS_ELEVATION_55 = 3015000; // km
-    long RADIUS_ELEVATION_60 = 2572000; // km
-    long RADIUS_ELEVATION_65 = 2134000; // km
-    long RADIUS_ELEVATION_70 = 1702000; // km
-    long RADIUS_ELEVATION_75 = 1273000; // km
-    long RADIUS_ELEVATION_80 = 847000; // km
-    long RADIUS_ELEVATION_85 = 423000; // km
     boolean CIRCLE_PAINTED = false;
-
+    public FileRegister fr1;
 
     // pongo esto de SignInActivity.java
     int RC_SIGN_IN = 9001;
@@ -267,6 +251,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
 
+        fr1 = new FileRegister();
+        Depuracion.traza("Comienza la traza 1", fr1);
+
+
+
+
         Depuracion.traza("server_client_id " + getString(R.string.server_client_id));
 
         // Configure sign-in to request the user's ID, email address, and basic
@@ -297,12 +287,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             String lastUpdateTime = new SimpleDateFormat("yyyy/MM/dd HH:mm").format(new Date(pInfo.lastUpdateTime));
             String firstInstallTime = new SimpleDateFormat("yyyy/MM/dd HH:mm").format(new Date(pInfo.firstInstallTime));
 
-            Depuracion.traza("****************" , textDepurador);
-            Depuracion.traza("Version: " + version, textDepurador);
-            Depuracion.traza("packageName: " + packageName, textDepurador);
-            Depuracion.traza("lastUpdateTime: " + lastUpdateTime, textDepurador);
-            Depuracion.traza("firstInstallTime: " + firstInstallTime, textDepurador);
-            Depuracion.traza("****************" , textDepurador);
+            Depuracion.traza("****************" , textDepurador, fr1);
+            Depuracion.traza("Version: " + version, textDepurador, fr1);
+            Depuracion.traza("packageName: " + packageName, textDepurador, fr1);
+            Depuracion.traza("lastUpdateTime: " + lastUpdateTime, textDepurador, fr1);
+            Depuracion.traza("firstInstallTime: " + firstInstallTime, textDepurador, fr1);
+            Depuracion.traza("****************" , textDepurador, fr1);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -314,9 +304,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo(); //las características actuales de la conexión
         if (networkInfo != null && networkInfo.isConnected()) {
-            Depuracion.traza("onCreate(). Hay conexion a internet ", textDepurador);
+            Depuracion.traza("onCreate(). Hay conexion a internet ", textDepurador, fr1);
         } else {
-            Depuracion.traza("onCreate(). ERROR, no hay conexion  a internetv ", textDepurador);
+            Depuracion.traza("onCreate(). ERROR, no hay conexion  a internetv ", textDepurador, fr1);
         }
 
         String urlFusionT = "https://www.googleapis.com/fusiontables/v2/";
@@ -348,7 +338,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         } catch (IOException e) {
             e.printStackTrace();
-            Depuracion.traza(this.getClass().getName() + " Excepcion e: " + e);
+            Depuracion.traza(this.getClass().getName() + " Excepcion e: " + e, fr1);
         } finally {
         }
 
@@ -372,12 +362,46 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         checkInitialEnabledProvider();
         actualizaGUI_Providers();
         actualizaGUI();
+
+
+
 //
 //        LatLng Obs_prueba1 = new LatLng(40, 60);
 //        float elevation1 = 90;
 //        float azimut1 = 0;
 //
 //        SatPos.calc_LatS(Obs_prueba1, elevation1,azimut1 ) ;
+
+    }
+
+
+    public boolean onLongClick(View v) {
+        switch (v.getId()) {
+            case R.id.GPS_track_button:
+                if (mapaSBS!=null) {
+                    zoomActual = ZOOM_GPS_TRACK;
+                    CameraPosition camPos_actual = new CameraPosition.Builder()
+                            .target(Pos_Camara)
+                            .zoom(zoomActual)
+                            .bearing(0).tilt(0).build();
+                    CameraUpdate camUpd32 = CameraUpdateFactory.newCameraPosition(camPos_actual);
+                    mapaSBS.animateCamera(camUpd32);
+                }
+                break;
+            case R.id.observador_track_button:
+                if (mapaSBS!=null) {
+                    zoomActual = ZOOM_OBSERVADOR;
+                    CameraPosition camPos_actual = new CameraPosition.Builder()
+                            .target(Pos_Camara)
+                            .zoom(zoomActual)
+                            .bearing(0).tilt(0).build();
+                    CameraUpdate camUpd32 = CameraUpdateFactory.newCameraPosition(camPos_actual);
+                    mapaSBS.animateCamera(camUpd32);
+                }
+                break;
+        }
+
+        return true;
 
     }
 
@@ -393,31 +417,31 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     try {
                         GpsStatusListener_Enabled = lm.addGpsStatusListener(gpsStatusListener);
                         if (GpsStatusListener_Enabled)
-                            Depuracion.traza("añade el gpsStatusListener", textDepurador);
+                            Depuracion.traza("añade el gpsStatusListener", textDepurador, fr1);
                     }catch (SecurityException e) {
                         GpsStatusListener_Enabled = false;
-                        Depuracion.traza("Casca el gpsStatusListener", textDepurador);
+                        Depuracion.traza("Casca el gpsStatusListener", textDepurador, fr1);
                     }
 
                     if (ProviderPassive_available) {
                         try {
                             lm.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, t_min, dist_min, locationListenerPassive);     //nos subscribimos al proveedor para que nos de información
                         } catch (SecurityException e) {
-                            Depuracion.traza("Security Excepcion en provider PASSIVE_PROVIDER al hacer requestLocationUpdates: " + e);
+                            Depuracion.traza("Security Excepcion en provider PASSIVE_PROVIDER al hacer requestLocationUpdates: " + e, fr1);
                         }
                     }
                     if (ProviderGPS_available) {
                         try {
                             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, t_min, dist_min, locationListenerGPS);     //nos subscribimos al proveedor para que nos de información
                         } catch (SecurityException e) {
-                            Depuracion.traza("Security Excepcion en provider GPS_PROVIDER al hacer requestLocationUpdates: " + e);
+                            Depuracion.traza("Security Excepcion en provider GPS_PROVIDER al hacer requestLocationUpdates: " + e, fr1);
                         }
                     }
                     if (ProviderNetwork_available) {
                         try {
                             lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, t_min, dist_min, locationListenerNetwork);     //nos subscribimos al proveedor para que nos de información
                         } catch (SecurityException e) {
-                            Depuracion.traza("Security Excepcion en provider NETWORK_PROVIDER al hacer requestLocationUpdates: " + e);
+                            Depuracion.traza("Security Excepcion en provider NETWORK_PROVIDER al hacer requestLocationUpdates: " + e, fr1);
                         }
                     }
                 } else  {
@@ -425,14 +449,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     if (GpsStatusListener_Enabled) {
                         lm.removeGpsStatusListener(gpsStatusListener);
                         GpsStatusListener_Enabled = false;
-                        Depuracion.traza("GpsStatus_listener eliminado", textDepurador);
+                        Depuracion.traza("GpsStatus_listener eliminado", textDepurador, fr1);
                     }
 
                     if (ProviderPassive_available) {
                         try {
                             lm.removeUpdates(locationListenerPassive);
                         } catch (SecurityException e) {
-                            Depuracion.traza("Security Excepcion en provider PASSIVE_PROVIDER al hacer removeUpdates: " + e);
+                            Depuracion.traza("Security Excepcion en provider PASSIVE_PROVIDER al hacer removeUpdates: " + e, fr1);
                         }
                     }
                     if (ProviderGPS_available) {
@@ -441,14 +465,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         try {
                             lm.removeUpdates(locationListenerGPS);
                         } catch (SecurityException e) {
-                            Depuracion.traza("Security Excepcion en provider GPS_PROVIDER al hacer removeUpdates: " + e);
+                            Depuracion.traza("Security Excepcion en provider GPS_PROVIDER al hacer removeUpdates: " + e, fr1);
                         }
                     }
                     if (ProviderNetwork_available) {
                         try {
                             lm.removeUpdates(locationListenerNetwork);
                         } catch (SecurityException e) {
-                            Depuracion.traza("Security Excepcion en provider NETWORK_PROVIDER al hacer removeUpdates: " + e);
+                            Depuracion.traza("Security Excepcion en provider NETWORK_PROVIDER al hacer removeUpdates: " + e, fr1);
                         }
                     }
                 }
@@ -476,7 +500,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 break;
             case R.id.buttonAux:
                 //prueba con FT
-                Depuracion.traza("Probando escritura a FT desde AUX", textDepurador);
+                Depuracion.traza("Probando escritura a FT desde AUX", textDepurador, fr1);
                 if (marker1_visible) {
                     marker1_visible = false;
                     marker1.remove();
@@ -490,8 +514,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 }
 
                // tareaPost2.execute(url_query_04);
-
-
 
                 break;
             case R.id.buttonMap:
@@ -569,7 +591,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
 
     private void signIn() {
-        Depuracion.traza("signin()", textDepurador);
+        Depuracion.traza("signin()", textDepurador, fr1);
         //Starting the intent prompts the user to select a Google account to sign in with.
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -578,7 +600,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     // [START signOut]
     private void signOut() {
-        Depuracion.traza("signout() mGoogleApiClient.isConnected:" + mGoogleApiClient.isConnected(), textDepurador);
+        Depuracion.traza("signout() mGoogleApiClient.isConnected:" + mGoogleApiClient.isConnected(), textDepurador, fr1);
         if (mGoogleApiClient.isConnected() ) {
             Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                     new ResultCallback<Status>() {
@@ -593,7 +615,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         } else {
 
         }
-        Depuracion.traza("signout() mGoogleApiClient.isConnected despues:" + mGoogleApiClient.isConnected(), textDepurador);
+        Depuracion.traza("signout() mGoogleApiClient.isConnected despues:" + mGoogleApiClient.isConnected(), textDepurador, fr1);
 
     }
     // [END signOut]
@@ -627,7 +649,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
-        Depuracion.traza("onConnectionFailed:" + connectionResult, textDepurador);
+        Depuracion.traza("onConnectionFailed:" + connectionResult, textDepurador, fr1);
     }
 
     @Override
@@ -635,8 +657,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        Depuracion.traza("onActivityResult().requestCode: " + requestCode, textDepurador);
-        Depuracion.traza("onActivityResult().resultCode: " + resultCode, textDepurador);
+        Depuracion.traza("onActivityResult().requestCode: " + requestCode, textDepurador, fr1);
+        Depuracion.traza("onActivityResult().resultCode: " + resultCode, textDepurador, fr1);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
@@ -656,7 +678,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
-        Depuracion.traza("handleSignInResult.result.isSuccess(): " + result.isSuccess(), textDepurador);
+        Depuracion.traza("handleSignInResult.result.isSuccess(): " + result.isSuccess(), textDepurador, fr1);
 
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
@@ -665,23 +687,23 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     + ", " + acct.getDisplayName()
                     + ", " + acct.getId()
 
-                    , textDepurador);
+                    , textDepurador, fr1);
 
             idToken = acct.getIdToken();
 
-            Depuracion.traza("mGoogleApiClient.isConnected(): "+ mGoogleApiClient.isConnected(), textDepurador);
+            Depuracion.traza("mGoogleApiClient.isConnected(): "+ mGoogleApiClient.isConnected(), textDepurador, fr1);
 
 
-                    Depuracion.traza("acct.getServerAuthCode(): " + acct.getServerAuthCode());
+                    Depuracion.traza("acct.getServerAuthCode(): " + acct.getServerAuthCode(), textDepurador, fr1);
 
-            Depuracion.traza("ID Token: " + idToken, textDepurador);
+            Depuracion.traza("ID Token: " + idToken, textDepurador, fr1);
 ///            tareaPost2.execute(idToken);
             // TODO(user): send token to server and validate server-side
             textUser.setText(acct.getDisplayName());
             updateUI(true);
         } else {
             textUser.setText("KO");
-            Depuracion.traza("ID Token: null", textDepurador);
+            Depuracion.traza("ID Token: null", textDepurador, fr1);
             // Signed out, show unauthenticated UI.
             updateUI(false);
         }
@@ -711,7 +733,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             public void onMapClick(LatLng point) {
                 //Projection proj = mapaSBS.getProjection();
                 //Point coord = proj.toScreenLocation(point);
-                Depuracion.traza("Click: " + point.latitude + ", " + point.longitude, textDepurador, textDepuradorMap);
+
             }
         });
 
@@ -734,14 +756,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
 
                 //Depuracion.traza("Cambio: " + sLat + ", " + sLong + ", " +
-                //        position.zoom + ", " + position.bearing + ", " + position.tilt, textDepurador, textDepuradorMap);
+                //        position.zoom + ", " + position.bearing + ", " + position.tilt, textDepurador, textDepuradorMap, fr1);
             }
         });
 
         mapaSBS.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker) {
-                Depuracion.traza("Marcador pulsado: " +
-                        marker.getTitle(), textDepurador, textDepuradorMap);
+//                Depuracion.traza("Marcador pulsado: " +
+//                        marker.getTitle(), textDepurador, textDepuradorMap, fr1);
                 return false;
             }
         });
@@ -753,11 +775,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         int contador_refresco = 0;
         int CONTADOR_REFERSCO_MAX = 10;
 
-        DecimalFormat format_coord = new DecimalFormat("000.0");
-        DecimalFormat format_PRN = new DecimalFormat("00");
-        DecimalFormat format_SNR = new DecimalFormat("00.0");
-        DecimalFormat format_Azi = new DecimalFormat("000.0");
-        DecimalFormat format_Ele = new DecimalFormat("00.0");
+
+//        DecimalFormat format_coord = new DecimalFormat("000.0");
+//        DecimalFormat format_PRN = new DecimalFormat("00");
+//        DecimalFormat format_SNR = new DecimalFormat("00.0");
+//        DecimalFormat format_Azi = new DecimalFormat("000.0");
+//        DecimalFormat format_Ele = new DecimalFormat("00.0");
 
         ArrayList<String[]> respuestaListener = null;
         Context contexto_dentro;
@@ -776,9 +799,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
 
 
+
         //ArrayList<String[]> respuestaListener = new ArrayList<String[]>();
         public myGpsStatusListener(TextView tv, ArrayList respuesta, Context contexto) {
-            Depuracion.traza("Constructor del myGpsStatusListener", textDepurador);
+            Depuracion.traza("Constructor del myGpsStatusListener", textDepurador, fr1);
             //String[] _fila1 = { "xB1", "xB2", "xB3", "xB4", "xB5"  };
             contexto_dentro = contexto;
             //respuesta.add(_fila1);
@@ -792,17 +816,16 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             LatLng Sat2 = new LatLng(0,0);
             LatLng pos_observador = new LatLng(pLat, pLong);  //OJO!!! deberia cogerse lat long del GPS, no en general
 
-
             contentTable.removeAllViews();
-            creaTablaGPS();
-
 
 //            Depuracion.traza("Circles, Markes, MarkersMovidos: "
-//                    +numeroCircles +", " +numeroMarkers+ ", " +numeroMarkersMovidos, textDepurador);
+//                    +numeroCircles +", " +numeroMarkers+ ", " +numeroMarkersMovidos, textDepurador, fr1);
             int i=0;
             while (sat.hasNext()) {
                 GpsSatellite satellite = sat.next();
                 boolean esPosicionNueva = false;
+
+
 
                 if (mapaSBS!=null&&GPS_track_active) {
                     if ((satellite.getElevation() != 0)&&satellite.getAzimuth()!=0) {
@@ -833,7 +856,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
                                 array_SateliteGPS_Position[satellite.getPrn()]
                                         .setRegisteredPositions(array_SateliteGPS_Position[satellite.getPrn()].getRegisteredPositions() + 1);
+                                fr1.registrarSAT(array_SateliteGPS_Position[satellite.getPrn()]);
                             }
+
+
 
 
                             if (esPosicionNueva) {
@@ -877,7 +903,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 TextView rowCell6 = new TextView(contexto_dentro);
                 TextView rowCell7 = new TextView(contexto_dentro);
 
-                rowCell1.setText(format_PRN.format(satellite.getPrn()) + "   ");
+
+
+                rowCell1.setText(SatelliteGPS_Position.format_PRN.format(satellite.getPrn()) + "   ");
                 rowCell1.setTextColor(Color.parseColor("#CCCCCC"));
                 rowCell1.setTextSize(TABLE_TEXT_SIZE);
                 row.addView(rowCell1);
@@ -885,26 +913,26 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 rowCell2.setTextColor(Color.parseColor("#CCCCCC"));
                 rowCell2.setTextSize(TABLE_TEXT_SIZE);
                 row.addView(rowCell2);
-                rowCell3.setText(format_SNR.format(satellite.getSnr()) + "   (");
+                rowCell3.setText(SatelliteGPS_Position.format_SNR.format(satellite.getSnr()) + "   (");
                 rowCell3.setTextColor(Color.parseColor("#CCCCCC"));
                 rowCell3.setTextSize(TABLE_TEXT_SIZE);
                 row.addView(rowCell3);
 
-                rowCell4.setText(format_Azi.format(satellite.getAzimuth()) + ", ");
+                rowCell4.setText(SatelliteGPS_Position.format_Azi.format(satellite.getAzimuth()) + ", ");
                 rowCell4.setTextColor(Color.parseColor("#CCCCCC"));
                 rowCell4.setTextSize(TABLE_TEXT_SIZE);
                 row.addView(rowCell4);
-                rowCell5.setText(format_Ele.format(satellite.getElevation()) + ")");
+                rowCell5.setText(SatelliteGPS_Position.format_Ele.format(satellite.getElevation()) + ")");
                 rowCell5.setTextColor(Color.parseColor("#CCCCCC"));
                 rowCell5.setTextSize(TABLE_TEXT_SIZE);
                 row.addView(rowCell5);
 
 
-                rowCell6.setText("  -- " + format_coord.format(Sat2.latitude) + ", ");
+                rowCell6.setText("  -- " + SatelliteGPS_Position.format_coord.format(Sat2.latitude) + ", ");
                 rowCell6.setTextColor(Color.parseColor("#CCCCCC"));
                 rowCell6.setTextSize(TABLE_TEXT_SIZE);
                 row.addView(rowCell6);
-                rowCell7.setText(""+format_coord.format(Sat2.longitude));
+                rowCell7.setText(SatelliteGPS_Position.format_coord.format(Sat2.longitude));
                 rowCell7.setTextColor(Color.parseColor("#CCCCCC"));
                 rowCell7.setTextSize(TABLE_TEXT_SIZE);
                 row.addView(rowCell7);
@@ -946,13 +974,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     rowCell4.setTextSize(TABLE_TEXT_SIZE);
                     row.addView(rowCell4);
                     rowCell5.setText("  -- " +
-                            format_coord.format(array_SateliteGPS_Position[aa].getLatitude()) + ", ");
+                            SatelliteGPS_Position.format_coord.format(array_SateliteGPS_Position[aa].getLatitude()) + ", ");
                     rowCell5.setTextColor(Color.parseColor("#FFFFFF"));
                     rowCell5.setTextSize(TABLE_TEXT_SIZE);
                     row.addView(rowCell5);
 
-                    rowCell6.setText("  -- " +
-                            format_coord.format(array_SateliteGPS_Position[aa].getLongitude()) + ", ");
+                    rowCell6.setText("" +
+                            SatelliteGPS_Position.format_coord.format(array_SateliteGPS_Position[aa].getLongitude()) + ", ");
                     rowCell6.setTextColor(Color.parseColor("#FFFFFF"));
                     rowCell6.setTextSize(TABLE_TEXT_SIZE);
                     row.addView(rowCell6);
@@ -980,13 +1008,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
             switch (event) {
                 case 1: //GPS_EVENT_STARTED
-                    Depuracion.traza("onGpsStatusChanged." + sEvent[event-1], textDepurador);
+                    Depuracion.traza("onGpsStatusChanged." + sEvent[event-1], textDepurador, fr1);
                     break;
                 case 2: //GPS_EVENT_STOPPED
-                    Depuracion.traza("onGpsStatusChanged." + sEvent[event-1], textDepurador);
+                    Depuracion.traza("onGpsStatusChanged." + sEvent[event-1], textDepurador, fr1);
                     break;
                 case 3: //GPS_EVENT_FIRST_FIX
-                    Depuracion.traza("onGpsStatusChanged." + sEvent[event-1]+" getTimeToFirstFix: "+ gpsStatus.getTimeToFirstFix(), textDepurador);
+                    Depuracion.traza("onGpsStatusChanged." + sEvent[event-1]+" getTimeToFirstFix: "+ gpsStatus.getTimeToFirstFix(), textDepurador, fr1);
                     break;
                 case 4: //GPS_EVENT_SATELLITE_STATUS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                     break;
@@ -1047,6 +1075,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         btnClearMarker.setOnClickListener(this);
         btnPosition.setOnClickListener(this);
         btnGPS_track.setOnClickListener(this);
+
+        btnGPS_track.setOnLongClickListener(this);
+        btnObs_track.setOnLongClickListener(this);
+
         btnObs_track.setOnClickListener(this);
         signInButton.setOnClickListener(this);
         signOutButton.setOnClickListener(this);
@@ -1069,12 +1101,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
 
 
-        Depuracion.traza("Screen Width " + Integer.toString(display_res_Ancho), textDepurador);
-        Depuracion.traza("Screen High: " + Integer.toString(display_res_Alto), textDepurador);
-        Depuracion.traza("Screen Density (dpi): " + display_densidad, textDepurador);
+        Depuracion.traza("Screen Width " + Integer.toString(display_res_Ancho), textDepurador, fr1);
+        Depuracion.traza("Screen High: " + Integer.toString(display_res_Alto), textDepurador, fr1);
+        Depuracion.traza("Screen Density (dpi): " + display_densidad, textDepurador, fr1);
         float scale = getApplicationContext().getResources().getDisplayMetrics().density;
         Depuracion.traza("Scale " + Float.toString(getApplicationContext()
-                .getResources().getDisplayMetrics().density), textDepurador);
+                .getResources().getDisplayMetrics().density), textDepurador, fr1);
 
         // buscando los pixeles a partir de dips con la densidad
         int dips = 200;
@@ -1087,24 +1119,24 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         switch(metrics.densityDpi)
         {
             case DisplayMetrics.DENSITY_HIGH: //HDPI
-                Depuracion.traza("DENSITY_HIGH", textDepurador);
+                Depuracion.traza("DENSITY_HIGH", textDepurador, fr1);
                 scaleDensity = scale * 240;
                 pixelBoton = dips * (scaleDensity / 240);
                 break;
             case DisplayMetrics.DENSITY_MEDIUM: //MDPI
-                Depuracion.traza("DENSITY_MEDIUM", textDepurador);
+                Depuracion.traza("DENSITY_MEDIUM", textDepurador, fr1);
                 scaleDensity = scale * 160;
                 pixelBoton = dips * (scaleDensity / 160);
                 break;
 
             case DisplayMetrics.DENSITY_LOW:  //LDPI
-                Depuracion.traza("DENSITY_LOW", textDepurador);
+                Depuracion.traza("DENSITY_LOW", textDepurador, fr1);
                 scaleDensity = scale * 120;
                 pixelBoton = dips * (scaleDensity / 120);
                 break;
         }
-        Depuracion.traza("scaleDensity: " + scaleDensity, textDepurador);
-        Depuracion.traza("pixelBoton: " + pixelBoton, textDepurador);
+        Depuracion.traza("scaleDensity: " + scaleDensity, textDepurador, fr1);
+        Depuracion.traza("pixelBoton: " + pixelBoton, textDepurador, fr1);
         Log.d(getClass().getSimpleName(), "pixels:" + Float.toString(pixelBoton));
         /////////////////////////////////////////////////////////////////////////////////////
 
@@ -1112,7 +1144,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         Resources resources = getResources();
         int dips2 = 200;
         float pixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dips2, resources.getDisplayMetrics());
-        Depuracion.traza("Forma 2. Pixels: " + pixels, textDepurador);
+        Depuracion.traza("Forma 2. Pixels: " + pixels, textDepurador, fr1);
         ///////////////////////////////////////////
 
 
@@ -1217,7 +1249,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 String sProvider = pProvider.substring(0,1); //gps, passive, network --> g, p, n
 
 
-                //Depuracion.traza("onLocationChanged_1 (Avail/Enab/Status): " + ProviderGPS_available+"/"+ProviderGPS_enabled+"/"+ProviderGPS_status, textDepurador);
+                //Depuracion.traza("onLocationChanged_1 (Avail/Enab/Status): " + ProviderGPS_available+"/"+ProviderGPS_enabled+"/"+ProviderGPS_status, textDepurador, fr1);
                 switch(pProvider) {
                     case "gps":
                         ProviderGPS_status = true;   //para forzar icono VERDE si llega posicion GPS antes de el mensaje de estado = 2
@@ -1240,7 +1272,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         sSpeed="-1.0";
                         break;
                 }
-                //Depuracion.traza("onLocationChanged_2 (Avail/Enab/Status): " + ProviderGPS_available+"/"+ProviderGPS_enabled+"/"+ProviderGPS_status, textDepurador);
+                //Depuracion.traza("onLocationChanged_2 (Avail/Enab/Status): " + ProviderGPS_available+"/"+ProviderGPS_enabled+"/"+ProviderGPS_status, textDepurador, fr1);
                 textLat.setText(sLong);
                 textLong.setText(sLat);
                 textPrec.setText(sPrec);
@@ -1252,7 +1284,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 textSpeed.setTextColor(Color.parseColor(labelColor));
 
 
-                Depuracion.traza("onLocationChanged: ("+sProvider+"): " + sLong + "," + sLat + ", " + sPrec + ", " +sSpeed, textDepurador);
+                //Depuracion.traza("onLocationChanged: (" + sProvider + "): " + sLong + "," + sLat + ", " + sPrec + ", " + sSpeed, textDepurador, fr1);
+                fr1.registrarOBS("  (" + sProvider + "): " + sLong + "," + sLat + ",    " + sPrec + ", " + sSpeed);
 
                 if (mapaSBS!=null&&obs_track_active) {
 
@@ -1280,7 +1313,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     }
 
                 } else {
-                    Depuracion.traza("onLocationChanged. mapaSBS = null", textDepurador);
+                    Depuracion.traza("onLocationChanged. mapaSBS = null", textDepurador, fr1);
                 }
             }
         }
@@ -1288,13 +1321,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
 
-            Depuracion.traza("onStatusChanged: provider: " + provider + ", status: " + status + ", extras: "+ extras, textDepurador);
+            //Depuracion.traza("onStatusChanged: provider: " + provider + ", status: " + status + ", extras: "+ extras, textDepurador, fr1);
             if (provider.equals("gps")){
                 if (status == LocationProvider.OUT_OF_SERVICE){
                     ProviderGPS_enabled = false;
                     ProviderGPS_available = false;
                     ProviderGPS_status = false;
-                    Depuracion.traza("OUT_OF_SERVICE", textDepurador);
+                    Depuracion.traza("OUT_OF_SERVICE", textDepurador, fr1);
                 }
                 if (status == LocationProvider.TEMPORARILY_UNAVAILABLE){
                     ProviderGPS_enabled = true;
@@ -1321,7 +1354,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             if (provider.equals("passive"))
                 ProviderPassive_enabled = true;
 
-            Depuracion.traza("onProviderEnabled() "+ provider, textDepurador);
+            Depuracion.traza("onProviderEnabled() "+ provider, textDepurador, fr1);
             actualizaGUI_Providers();
         }
 
@@ -1337,7 +1370,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             if (provider.equals("passive")) {
                 ProviderPassive_enabled = false;
             }
-            Depuracion.traza("onProviderDisabled() "+ provider, textDepurador);
+            Depuracion.traza("onProviderDisabled() "+ provider, textDepurador, fr1);
             actualizaGUI_Providers();
         }
     }
@@ -1351,7 +1384,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             ProviderNetwork_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         if (ProviderPassive_available)
             ProviderPassive_enabled = lm.isProviderEnabled(LocationManager.PASSIVE_PROVIDER);
-        Depuracion.traza("checkInitialEnabledProvider (G/N/P): " + ProviderGPS_enabled + ", " + ProviderNetwork_enabled + ", " + ProviderPassive_enabled, textDepurador);
+        Depuracion.traza("checkInitialEnabledProvider (G/N/P): "
+                + ProviderGPS_enabled + ", " + ProviderNetwork_enabled + ", " + ProviderPassive_enabled, textDepurador, fr1);
     }
 
     public void checkInitialAvailableProvider() {
@@ -1360,7 +1394,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         ProviderGPS_available = listProviders.contains("gps");
         ProviderNetwork_available = listProviders.contains("network");
         ProviderPassive_available = listProviders.contains("passive");
-        //Depuracion.traza("xxx: " + ProviderGPS_available + " " + ProviderNetwork_available + " " + ProviderPassive_available);
     }
 
 
@@ -1370,7 +1403,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             CIRCLE_PAINTED = false;
             image_status_gps.setImageResource(R.drawable.gps_24_grey_crossed);
         } else if ((!status_Activado) ||
-                    (status_Activado)&&(!ProviderGPS_enabled)
+                    (status_Activado)&&(!ProviderGPS_enabled)  //TODO: no parece muy claro la agrupacion, creo que faltan parentesis
                 ) {
             CIRCLE_PAINTED = false;
             image_status_gps.setImageResource(R.drawable.gps_24_grey);
@@ -1378,54 +1411,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             image_status_gps.setImageResource(R.drawable.gps_24_green);
             if (mapaSBS!=null) {
                 if ((Pos_ObservadorGPS!=null)&&(!CIRCLE_PAINTED)) {
-                    Depuracion.traza("pintco ciruclo: " + RADIUS_ELEVATION_0, textDepurador);
-                    Circle circle_elevation_0 = mapaSBS.addCircle(new CircleOptions()
-                            .center(Pos_ObservadorGPS).radius(RADIUS_ELEVATION_0).strokeWidth(4)
-                            .strokeColor(Color.RED));
-//                    Circle circle_elevation_5 = mapaSBS.addCircle(new CircleOptions()
-//                            .center(Pos_ObservadorGPS).radius(RADIUS_ELEVATION_5).strokeWidth(2)
-//                            .strokeColor(Color.BLUE));
-                    Circle circle_elevation_10 = mapaSBS.addCircle(new CircleOptions()
-                            .center(Pos_ObservadorGPS).radius(RADIUS_ELEVATION_10).strokeWidth(2)
-                            .strokeColor(Color.BLUE));
-                    Circle circle_elevation_20 = mapaSBS.addCircle(new CircleOptions()
-                            .center(Pos_ObservadorGPS).radius(RADIUS_ELEVATION_20).strokeWidth(2)
-                            .strokeColor(Color.BLUE));
-                    Circle circle_elevation_30 = mapaSBS.addCircle(new CircleOptions()
-                            .center(Pos_ObservadorGPS).radius(RADIUS_ELEVATION_30).strokeWidth(2)
-                            .strokeColor(Color.BLUE));
-                    Circle circle_elevation_40 = mapaSBS.addCircle(new CircleOptions()
-                            .center(Pos_ObservadorGPS).radius(RADIUS_ELEVATION_40).strokeWidth(2)
-                            .strokeColor(Color.BLUE));
-                    Circle circle_elevation_45 = mapaSBS.addCircle(new CircleOptions()
-                            .center(Pos_ObservadorGPS).radius(RADIUS_ELEVATION_45).strokeWidth(4)
-                            .strokeColor(Color.BLUE));
-                    Circle circle_elevation_50 = mapaSBS.addCircle(new CircleOptions()
-                            .center(Pos_ObservadorGPS).radius(RADIUS_ELEVATION_50).strokeWidth(2)
-                            .strokeColor(Color.BLUE));
-                    Circle circle_elevation_55 = mapaSBS.addCircle(new CircleOptions()
-                            .center(Pos_ObservadorGPS).radius(RADIUS_ELEVATION_55).strokeWidth(1)
-                            .strokeColor(Color.BLUE));
-                    Circle circle_elevation_60 = mapaSBS.addCircle(new CircleOptions()
-                            .center(Pos_ObservadorGPS).radius(RADIUS_ELEVATION_60).strokeWidth(2)
-                            .strokeColor(Color.BLUE));
-                    Circle circle_elevation_65 = mapaSBS.addCircle(new CircleOptions()
-                            .center(Pos_ObservadorGPS).radius(RADIUS_ELEVATION_65).strokeWidth(1)
-                            .strokeColor(Color.BLUE));
-                    Circle circle_elevation_70 = mapaSBS.addCircle(new CircleOptions()
-                            .center(Pos_ObservadorGPS).radius(RADIUS_ELEVATION_70).strokeWidth(2)
-                            .strokeColor(Color.BLUE));
-                    Circle circle_elevation_75 = mapaSBS.addCircle(new CircleOptions()
-                            .center(Pos_ObservadorGPS).radius(RADIUS_ELEVATION_75).strokeWidth(1)
-                            .strokeColor(Color.BLUE));
-                    Circle circle_elevation_80 = mapaSBS.addCircle(new CircleOptions()
-                            .center(Pos_ObservadorGPS).radius(RADIUS_ELEVATION_80).strokeWidth(2)
-                            .strokeColor(Color.BLUE));
-                    Circle circle_elevation_85 = mapaSBS.addCircle(new CircleOptions()
-                            .center(Pos_ObservadorGPS).radius(RADIUS_ELEVATION_85).strokeWidth(1)
-                            .strokeColor(Color.BLUE));
-
-
+                    UtilMap.circulosElevation(mapaSBS, Pos_ObservadorGPS);
                     CIRCLE_PAINTED = true;
                 }
             }
@@ -1460,14 +1446,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         } else {
             image_status_network.setImageResource(R.drawable.icon_dot_red_small);
         }
-
-
-
-
-
-
-
-
     }
 
     public void actualizaGUI() {
@@ -1503,8 +1481,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             layoutMap.setVisibility(View.INVISIBLE);
         }
 
-
-
         if (status_Activado) {
             editText_T_Min.setEnabled (false);
             editText_Dist_Min.setEnabled(false);
@@ -1517,19 +1493,5 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             editText_Dist_Min.setTextColor(Color.parseColor("#FFFFFF"));            
         }
     }
-
-    public void creaTablaGPS() {
-        String[] cabecera = {" PRN ", " InFix ", " SNR ", "  Azim  ", "  Elev  ", "  LatS  ", "  LonS  "};
-        TableRow rowCabecera = new TableRow(this);
-        //for (int j = 0; j < content.get(0).length; j++) {
-        for (int j = 0; j < cabecera.length; j++) {
-            TextView rowCell = new TextView(this);
-            rowCell.setText(cabecera[j]);
-            rowCell.setTextColor(Color.parseColor("#FFFF00"));
-            rowCabecera.addView(rowCell);
-        }
-        contentTable.addView(rowCabecera);
-    }
-
 }
 

@@ -12,16 +12,26 @@ public class Depuracion {
     public static void traza(String mensaje, TextView tv) {
         String hora = DateFormat.getTimeInstance().format(new Date())+": ";
         System.out.println(hora + " " + idDep + mensaje);
-        tv.append("\n" + hora+mensaje);
+        tv.append("\n" + hora + mensaje);
     }
     public static void traza(String mensaje) {
         String hora = DateFormat.getTimeInstance().format(new Date())+": ";
         System.out.println(hora + " " + idDep + mensaje);
     }
-    public static void traza(String mensaje, TextView tv, TextView tv2) {
+    public static void traza(String mensaje, TextView tv, FileRegister fr) {
         String hora = DateFormat.getTimeInstance().format(new Date())+": ";
         System.out.println(hora + " " + idDep + mensaje);
         tv.append("\n" + hora + mensaje);
-        tv2.append("\n" + hora + mensaje);
+        String cadena = hora + "  " + mensaje;
+        fr.registrarDEP(cadena);
     }
+
+    public static void traza(String mensaje, FileRegister fr) {
+        String hora = DateFormat.getTimeInstance().format(new Date())+": ";
+        String cadena = hora + "  " + mensaje;
+        fr.registrarDEP(cadena);
+    }
+
+
+
 }
